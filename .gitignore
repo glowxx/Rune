@@ -1,0 +1,62 @@
+# Dependencies and generated frontend output
+node_modules/
+build/
+.svelte-kit/
+package/
+
+# Rust / Tauri generated output
+src-tauri/target/
+src-tauri/gen/
+
+# Local tooling, reports and release staging
+.claude/
+.vscode/
+.idea/
+audit/
+graphify-out/
+rune-release/
+.graphifyignore
+
+# Local configuration, logs and temporary files
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Never commit vault data, exports or backups
+*.vault
+*.rune
+vaults.json
+backups/
+backup/
+exports/
+*.sqlite
+*.sqlite3
+*.db
+*.bak
+*.backup
+
+# Credentials and private key material
+*.pem
+*.key
+*.p12
+*.pfx
+*.secret
+*.kdbx
+.npmrc
+.cargo/credentials
+.cargo/credentials.toml
+credentials*.json
+secrets*.json
+id_rsa
+id_ed25519
+.agents/
+.codex/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

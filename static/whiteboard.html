@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Whiteboard</title>
+    <style>
+      html,
+      body,
+      #root {
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      body {
+        background: #1c1c1c;
+        overflow: hidden;
+      }
+      #msg {
+        color: #bbb;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px;
+        padding: 24px;
+        line-height: 1.6;
+      }
+    </style>
+    <script>
+      // Ścieżka assetów Excalidraw (fonty itp.) z tego samego CDN.
+      window.EXCALIDRAW_ASSET_PATH =
+        "https://unpkg.com/@excalidraw/excalidraw@0.17.6/dist/";
+    </script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"
+    ></script>
+    <script src="https://unpkg.com/@excalidraw/excalidraw@0.17.6/dist/excalidraw.production.min.js"></script>
+  </head>
+  <body>
+    <div id="root"><div id="msg">Loading whiteboard…</div></div>
+    <script>
+      (function () {
+        var init = window.__WB_INIT__ || {};
+        var tauri = window.__TAURI__;
+
+        function fail(text) {
+          var root = document.getElementById("root");
+          if (root) root.innerHTML = '<div id="msg">' + text + "</div>";
+        }
+
+        if (!window.React || !window.ReactDOM || !window.ExcalidrawLib) {
+          fail(
+            "Could not load the whiteboard editor. Check your internet connection and reopen.",
+          );
+          return;
+        }
+
+        var Excalidraw = window.ExcalidrawLib.Excalidraw;
+        var e = window.React.createElement;
+        var saveTimer = null;
+
+        // Autozapis (debounce 1s). Tytuł NIE jest wysyłany — okno nie nadpisuje
+        // nazwy zmienionej w panelu; backend zachowuje istniejący tytuł.
+        function scheduleSave(elements, appState, files) {
+          if (!tauri || !init.id) return;
+          if (saveTimer) clearTimeout(saveTimer);
+          saveTimer = setTimeout(function () {
+            var cleanAppState = Object.assign({}, appState);
+            delete cleanAppState.collaborators;
+            var sceneJson = JSON.stringify({
+              type: "excalidraw",
+              version: 2,
+              source: "rune",
+              elements: elements,
+              appState: cleanAppState,
+              files: files || {},
+            });
+            tauri.core
+              .invoke("save_whiteboard_from_window", {
+                whiteboardId: init.id,
+                noteId: init.noteId,
+                sceneJson: sceneJson,
+              })
+              .catch(function () {});
+          }, 1000);
+        }
+
+        function render(initialData) {
+          var root = window.ReactDOM.createRoot(document.getElementById("root"));
+          root.render(
+            e(Excalidraw, {
+              theme: "dark",
+              initialData: initialData,
+              onChange: function (elements, appState, files) {
+                scheduleSave(elements, appState, files);
+              },
+            }),
+          );
+        }
+
+        function parseScene(json) {
+          try {
+            var scene = JSON.parse(json || "{}");
+            if (scene && scene.appState) delete scene.appState.collaborators;
+            if (scene && (scene.elements || scene.appState)) {
+              return {
+                elements: scene.elements || [],
+                appState: scene.appState || {},
+                files: scene.files || {},
+              };
+            }
+          } catch (_) {}
+          return null;
+        }
+
+        // Pobierz zaszyfrowaną scenę z vaultu, potem wyrenderuj edytor.
+        if (tauri && init.id) {
+          tauri.core
+            .invoke("load_whiteboard", { whiteboardId: init.id })
+            .then(function (data) {
+              render(parseScene(data && data.excalidrawJson));
+            })
+            .catch(function () {
+              render(null);
+            });
+        } else {
+          render(null);
+        }
+      })();
+    </script>
+  </body>
+</html>

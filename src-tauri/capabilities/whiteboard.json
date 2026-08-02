@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "whiteboard",
+  "description": "Capability for embedded Excalidraw whiteboard windows",
+  "windows": ["whiteboard-*"],
+  "permissions": ["core:default"]
+}

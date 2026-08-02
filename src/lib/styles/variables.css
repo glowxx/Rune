@@ -1,0 +1,126 @@
+/* Rune — design system.
+ *
+ * Motywowanie: cały UI wywodzi się z MAŁEGO zestawu zmiennych bazowych
+ * (poniżej, sekcja „base"). Motyw (theme.store.ts) nadpisuje TYLKO te zmienne
+ * na `document.documentElement`, a wszystkie pozostałe (nakładki, tinty akcentu,
+ * skala szarości) przeliczają się automatycznie, bo są wyrażone względem nich.
+ *
+ * Klucz do motywu jasnego: `--fg-rgb` to „atrament" UI (255,255,255 dla ciemnych,
+ * 0,0,0 dla jasnych). Wszystkie nakładki i skala szarości używają go przez rgba(),
+ * więc przełączenie jednej zmiennej odwraca cały interfejs. `--accent-rgb` robi
+ * to samo dla tintów akcentu. */
+
+:root {
+  /* ══ BASE — to nadpisuje motyw ══════════════════════════════════════════ */
+  --bg-app: #131211; /* panel edytora + body (tło główne) */
+  --bg-nav: #191715; /* lewy panel nawigacji */
+  --bg-elevated: #211f1d; /* powierzchnie wyniesione (menu, switcher, karty) */
+
+  --accent: #5b8af0; /* kolor akcentu */
+  --accent-rgb: 91, 138, 240; /* ten sam akcent jako RGB (do tintów) */
+  --accent-hover: #7aa0f4; /* akcent w stanie hover */
+
+  --text-primary: #e0deda; /* bazowy kolor tekstu (pełny) */
+  --fg-rgb: 255, 255, 255; /* „atrament" UI — RGB nakładek i skali szarości */
+
+  /* ══ DERIVED — wyliczane z base, motyw ich nie dotyka ═══════════════════ */
+
+  /* ── Tinty akcentu ── */
+  --accent-bg: rgba(var(--accent-rgb), 0.1); /* tło pigułek / „Nowa" / aktywnej sub-notatki */
+  --accent-border: rgba(var(--accent-rgb), 0.2); /* obramowanie przycisku „Nowa" */
+  --accent-dim: rgba(var(--accent-rgb), 0.55); /* tagi w liście notatek */
+
+  /* ── Tekst (warianty wywiedzione z --text-primary / --fg-rgb) ── */
+  --text-logo: var(--text-primary);
+  --text-title: var(--text-primary); /* tytuł h1 w edytorze */
+  --text-note-active: var(--text-primary);
+  --text-subnote-active: rgba(var(--fg-rgb), 0.8);
+  --text-body: rgba(var(--fg-rgb), 0.62); /* treść notatki */
+
+  /* ── Linie / separatory ── */
+  --line: rgba(var(--fg-rgb), 0.06);
+
+  /* ── Stany tła (nakładki atramentem) ── */
+  --bg-hover-folder: rgba(var(--fg-rgb), 0.03);
+  --bg-hover-subnote: rgba(var(--fg-rgb), 0.045);
+  --bg-active-folder: rgba(var(--fg-rgb), 0.07);
+
+  /* ── Skala szarości tekstu (atrament × alfa) ── */
+  --fg-10: rgba(var(--fg-rgb), 0.1); /* separator-kropka w meta */
+  --fg-15: rgba(var(--fg-rgb), 0.15); /* placeholder contenteditable */
+  --fg-18: rgba(var(--fg-rgb), 0.18); /* etykieta „BIBLIOTEKA", data w liście */
+  --fg-20: rgba(var(--fg-rgb), 0.2); /* chevron folderu, kropka sub-notatki, licznik */
+  --fg-22: rgba(var(--fg-rgb), 0.22); /* data w edytorze */
+  --fg-24: rgba(var(--fg-rgb), 0.24); /* breadcrumb — folder */
+  --fg-26: rgba(var(--fg-rgb), 0.26); /* ikony toolbaru, ikona folderu (nieaktywna) */
+  --fg-28: rgba(var(--fg-rgb), 0.28); /* ikona ustawień */
+  --fg-30: rgba(var(--fg-rgb), 0.3); /* sub-notatka (nieaktywna) */
+  --fg-36: rgba(var(--fg-rgb), 0.36); /* etykieta folderu (nieaktywna) */
+  --fg-40: rgba(var(--fg-rgb), 0.4); /* hover nagłówka sekcji */
+  --fg-44: rgba(var(--fg-rgb), 0.44); /* breadcrumb — tytuł notatki */
+  --fg-50: rgba(var(--fg-rgb), 0.5); /* chevron folderu (aktywny) */
+
+  /* ── Wymiary ── */
+  --nav-width: 188px;
+  --topbar-height: 49px;
+  --editor-max: 656px;
+
+  /* ── Promienie ── */
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 6px;
+
+  /* ── Typografia — wyłącznie fonty systemowe (zero zewnętrznych) ── */
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
+
+  /* ── Scrollbar ── */
+  --scrollbar-thumb: rgba(var(--fg-rgb), 0.07);
+}
+
+/* ── Reset + globalne style (z mockupu) ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 2px;
+}
+
+[contenteditable]:focus {
+  outline: none;
+}
+[contenteditable]:empty::before {
+  content: attr(data-placeholder);
+  color: var(--fg-15);
+  pointer-events: none;
+}
+
+button {
+  cursor: pointer;
+}
