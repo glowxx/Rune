@@ -36,7 +36,7 @@ parking_lot = "0.12"
 docx-rs = "0.4.22"
 # Indeks wyszukiwania FTS5 trzymany w pamięci (`:memory:`). `bundled` kompiluje
 # SQLite z włączonym FTS5 — żaden plaintext nie trafia na dysk jako plik SQLite.
-rusqlite = { version = "0.31", features = ["bundled"] }
+rusqlite = { version = "0.40", features = ["bundled"] }
 
 # Anti-screenshot: SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE). Wersja
 # dopasowana do tej, którą ciągnie Tauri (window.hwnd() zwraca ten sam HWND).
