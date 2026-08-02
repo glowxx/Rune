@@ -22,7 +22,6 @@
   } from "$lib/stores/app.store";
   import { openTimeLog } from "$lib/stores/timeLog.store";
   import { createWhiteboard } from "$lib/stores/whiteboard.store";
-  import logoUrl from "$lib/assets/logo.png";
   import {
     searchActive,
     searchQuery,
@@ -226,13 +225,6 @@
 </script>
 
 <nav class="nav">
-  <header class="logo">
-    <div class="logo-mark">
-      <img class="logo-img" src={logoUrl} alt="Rune logo" width="10" height="20" />
-      <span class="logo-text">Rune</span>
-    </div>
-  </header>
-
   <div class="section-label">
     <span>{$searchActive ? "Search" : "Library"}</span>
     {#if !$searchActive}
@@ -579,35 +571,6 @@
     flex-direction: column;
     flex-shrink: 0;
     overflow: hidden;
-  }
-
-  .logo {
-    height: var(--topbar-height);
-    padding: 0 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--line);
-    flex-shrink: 0;
-  }
-  .logo-mark {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .logo-img {
-    width: auto;
-    height: 20px;
-    display: block;
-    flex-shrink: 0;
-    /* Keeps the transparent silver rune legible on light themes without a background box */
-    filter: drop-shadow(0 0 0.5px rgba(0, 0, 0, 0.55));
-  }
-  .logo-text {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-    color: var(--text-logo);
   }
 
   .section-label {
